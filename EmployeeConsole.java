@@ -8,12 +8,12 @@ class Employee {
 	
 	public Employee(final int id, final String name, final double rate) {
 		this.id = id;
-		this.name = name;
+		this.name = ucfirst(name);
 		this.rate = rate;
 	}
 
 	public void setName(final String name) {
-		this.name = name;
+		this.name = ucfirst(name);
 	}
 
 	public void setRate(final Double rate) {
@@ -30,6 +30,10 @@ class Employee {
 
 	public double getRate() {
 		return rate;
+	}
+
+	private String ucfirst(String s) {
+		return String.valueOf(s.charAt(0)).toUpperCase() + s.substring(1, s.length());
 	}
 }
 
