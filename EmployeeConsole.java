@@ -16,7 +16,7 @@ class Employee {
 		this.name = ucfirst(name);
 	}
 
-	public void setRate(final Double rate) {
+	public void setRate(final double rate) {
 		this.rate = rate;
 	}
 
@@ -32,6 +32,10 @@ class Employee {
 		return rate;
 	}
 
+	public double getSalary(double hours) {
+		return hours * rate;
+	}
+
 	private String ucfirst(String s) {
 		return String.valueOf(s.charAt(0)).toUpperCase() + s.substring(1, s.length());
 	}
@@ -39,8 +43,8 @@ class Employee {
 
 class Test {
 	public static void main(final String[] args) {
-		final ArrayList<Employee> employees = new ArrayList<Employee>();
 		final Scanner scan = new Scanner(System.in);
+		final ArrayList<Employee> employees = new ArrayList<Employee>();
 		int id = 0;
 		boolean exit = false;
 		Employee e;
@@ -51,21 +55,20 @@ class Test {
 			System.out.println("2. Display all Employees");
 			System.out.println("3. Update Employee");
 			System.out.println("4. Delete Employee");
-			System.out.println("5. Exit Console");
+			System.out.println("5. Compute Salary");
+			System.out.println("6. Exit Console");
 
 			System.out.print("Option: ");
-			final int option = scan.nextInt();
+			int option = scan.nextInt();
 			
 			switch(option) {
 				case 1: 
 					int last_id = employees.isEmpty() ? 0 : 1 + employees.get(employees.size() - 1).getID();
-					System.out.print(last_id);
 					employees.add(addEmployee(last_id)); 
 				break;
 				case 2: displayEmployees(employees); break;
 				case 3: 
-					System.out.print("Enter Employee ID: ");
-					id = scan.nextInt();
+					id = inputID();
 					e = searchEmployee(id, employees);
 					if(e == null) {
 						System.out.println("Could not find Employee.");
@@ -74,8 +77,7 @@ class Test {
 					}
 				break;
 				case 4: 
-					System.out.print("Enter Employee ID: ");
-					id = scan.nextInt();
+					id = inputID();
 					e = searchEmployee(id, employees);
 					if(e == null) {
 						System.out.println("Could not find Employee.");
@@ -83,7 +85,14 @@ class Test {
 						employees.remove(e);
 					}
 				break;
-				case 5: exit = true; break;
+				case 5:
+					id = inputID();
+					e = searchEmployee(id, employees);
+					System.out.print("Enter Number of Hours: ");
+					double hours = scan.nextDouble();
+					System.out.println("Salary: " +  e.getSalary(hours));
+					break;
+				case 6: exit = true; break;
 			}
 		} while(!exit);
 		scan.close();
@@ -112,7 +121,6 @@ class Test {
 			case 1: employee.setName(update); break;
 			case 2: employee.setRate(Double.parseDouble(update)); break;
 		}
-
 	}
 
 	public static Employee searchEmployee(final int id, final ArrayList<Employee> employees) {
@@ -122,6 +130,13 @@ class Test {
 			}
 		}
 		return null;
+	}
+
+	public static int inputID() {
+		final Scanner scan = new Scanner(System.in);
+		System.out.print("Enter Employee ID: ");
+		int n = scan.nextInt();
+		return n;
 	}
 
 	public static void displayEmployees(final ArrayList<Employee> employees) {
