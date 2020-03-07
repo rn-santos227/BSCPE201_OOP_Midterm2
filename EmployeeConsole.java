@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 class Employee {
@@ -41,6 +42,21 @@ class Employee {
 	}
 }
 
+
+class BlankException extends Exception {
+	private static final long serialVersionUID = 1L;
+	public BlankException() {
+		super("This field should always have a value.");
+	}
+}
+
+class OptionException extends Exception {
+	private static final long serialVersionUID = 1L;
+	public OptionException() {
+		super("Option denied.");
+	}
+}
+
 class Test {
 	public static void main(final String[] args) {
 		final Scanner scan = new Scanner(System.in);
@@ -50,6 +66,13 @@ class Test {
 		Employee e;
 		
 		do {
+			try {
+
+			} 
+
+			catch(OptionException ex) {
+				scan.nextLine();
+			}
 			System.out.println("Select Activity: ");
 			System.out.println("1. Add Employee");
 			System.out.println("2. Display all Employees");
@@ -91,7 +114,7 @@ class Test {
 					System.out.print("Enter Number of Hours: ");
 					double hours = scan.nextDouble();
 					System.out.println("Salary: " +  e.getSalary(hours));
-					break;
+				break;
 				case 6: exit = true; break;
 			}
 		} while(!exit);
@@ -100,10 +123,31 @@ class Test {
 
 	public static Employee addEmployee(final int last_id) {
 		final Scanner scan = new Scanner(System.in);
-		System.out.print("Enter Employee Name: ");
-		final String name = scan.nextLine();
-		System.out.print("Enter Employee Rate: ");
-		final double rate = scan.nextDouble();
+		boolean flag = true;
+		String name = "";
+		double rate = 0;
+		do {
+			try {
+				System.out.print("Enter Employee Name: ");
+				name = scan.nextLine();
+				if(name.isBlank()) throw new BlankException();
+				System.out.print("Enter Employee Rate: ");
+				rate = scan.nextDouble();
+				if(String.valueOf(rate).isBlank()) throw new BlankException();
+			} 
+
+			catch(Exception ex) {
+				String message = "";
+				
+				if(ex instanceof BlankException) message = ex.getMessage();
+				else if(ex instanceof InputMismatchException) message = "Please enter the correct value";
+				
+				System.out.println(message);
+				scan.nextLine();
+			}
+
+		} while(flag);
+		scan.close();
 		return new Employee(last_id, name, rate);
 	}
 
@@ -121,6 +165,7 @@ class Test {
 			case 1: employee.setName(update); break;
 			case 2: employee.setRate(Double.parseDouble(update)); break;
 		}
+		scan.close();
 	}
 
 	public static Employee searchEmployee(final int id, final ArrayList<Employee> employees) {
